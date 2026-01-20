@@ -101,7 +101,6 @@ const RacingGame = () => {
             playerDistance={playerDistance}
             maxDistance={maxDistance}
             lastAnswerResult={lastAnswerResult}
-            competitors={competitors}
           />
         </div>
 
