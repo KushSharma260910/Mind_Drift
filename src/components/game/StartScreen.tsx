@@ -1,15 +1,34 @@
+import { useState } from 'react';
 import { motion } from 'framer-motion';
 import { AgeGroup } from '@/data/questions';
-import { Volume2, VolumeX, Trophy, Zap, Brain } from 'lucide-react';
+import { Volume2, VolumeX, Trophy, Zap, Brain, User } from 'lucide-react';
 import { Button } from '@/components/ui/button';
+import { Input } from '@/components/ui/input';
 
 interface StartScreenProps {
-  onStart: (ageGroup: AgeGroup) => void;
+  onStart: (ageGroup: AgeGroup, playerName: string) => void;
   soundEnabled: boolean;
   onToggleSound: () => void;
 }
 
 const StartScreen = ({ onStart, soundEnabled, onToggleSound }: StartScreenProps) => {
+  const [playerName, setPlayerName] = useState('');
+  const [nameError, setNameError] = useState('');
+
+  const handleStart = (ageGroup: AgeGroup) => {
+    const trimmedName = playerName.trim();
+    if (!trimmedName) {
+      setNameError('Please enter your name to start!');
+      return;
+    }
+    if (trimmedName.length > 20) {
+      setNameError('Name must be 20 characters or less');
+      return;
+    }
+    setNameError('');
+    onStart(ageGroup, trimmedName);
+  };
+
   return (
     <div className="min-h-screen flex flex-col items-center justify-center p-4 relative overflow-hidden">
       {/* Animated background elements */}
@@ -75,7 +94,7 @@ const StartScreen = ({ onStart, soundEnabled, onToggleSound }: StartScreenProps)
             animate={{ rotate: [0, -5, 5, 0] }}
             transition={{ duration: 2, repeat: Infinity, repeatDelay: 3 }}
           >
-            🏎️
+            🚗
           </motion.div>
           <h1 className="font-racing text-5xl md:text-6xl font-bold mb-2 neon-text text-primary">
             QUIZ RACER
@@ -87,7 +106,7 @@ const StartScreen = ({ onStart, soundEnabled, onToggleSound }: StartScreenProps)
 
         {/* Features */}
         <motion.div
-          className="flex flex-wrap justify-center gap-4 mb-10 max-w-md mx-auto"
+          className="flex flex-wrap justify-center gap-4 mb-8 max-w-md mx-auto"
           initial={{ opacity: 0 }}
           animate={{ opacity: 1 }}
           transition={{ delay: 0.4 }}
@@ -102,8 +121,40 @@ const StartScreen = ({ onStart, soundEnabled, onToggleSound }: StartScreenProps)
           </div>
           <div className="flex items-center gap-2 px-4 py-2 rounded-full bg-card/60 backdrop-blur-sm border border-border">
             <Trophy className="w-4 h-4 text-warning" />
-            <span className="text-sm">Compete & Win</span>
+            <span className="text-sm">Leaderboard</span>
           </div>
+        </motion.div>
+
+        {/* Player Name Input */}
+        <motion.div
+          className="mb-8 max-w-sm mx-auto"
+          initial={{ opacity: 0, y: 20 }}
+          animate={{ opacity: 1, y: 0 }}
+          transition={{ delay: 0.5 }}
+        >
+          <div className="relative">
+            <User className="absolute left-4 top-1/2 -translate-y-1/2 w-5 h-5 text-muted-foreground" />
+            <Input
+              type="text"
+              placeholder="Enter your name..."
+              value={playerName}
+              onChange={(e) => {
+                setPlayerName(e.target.value);
+                setNameError('');
+              }}
+              maxLength={20}
+              className="pl-12 py-6 text-lg font-racing bg-card/80 border-2 border-primary/30 focus:border-primary text-center placeholder:text-muted-foreground/60"
+            />
+          </div>
+          {nameError && (
+            <motion.p
+              initial={{ opacity: 0, y: -10 }}
+              animate={{ opacity: 1, y: 0 }}
+              className="text-destructive text-sm mt-2"
+            >
+              {nameError}
+            </motion.p>
+          )}
         </motion.div>
 
         {/* Age group selection */}
@@ -123,7 +174,7 @@ const StartScreen = ({ onStart, soundEnabled, onToggleSound }: StartScreenProps)
               whileTap={{ scale: 0.98 }}
             >
               <Button
-                onClick={() => onStart('young')}
+                onClick={() => handleStart('young')}
                 className="w-full sm:w-auto px-8 py-6 text-lg font-racing bg-gradient-to-r from-neon-cyan to-primary hover:opacity-90 text-primary-foreground neon-box-cyan"
                 size="lg"
               >
@@ -140,7 +191,7 @@ const StartScreen = ({ onStart, soundEnabled, onToggleSound }: StartScreenProps)
               whileTap={{ scale: 0.98 }}
             >
               <Button
-                onClick={() => onStart('adult')}
+                onClick={() => handleStart('adult')}
                 className="w-full sm:w-auto px-8 py-6 text-lg font-racing bg-gradient-to-r from-secondary to-neon-orange hover:opacity-90 text-secondary-foreground neon-box-orange"
                 size="lg"
               >
