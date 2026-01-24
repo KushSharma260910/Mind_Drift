@@ -14,8 +14,12 @@ const RaceTrack = ({ playerDistance, maxDistance, lastAnswerResult }: RaceTrackP
     <div className="w-full max-w-4xl mx-auto p-4">
       {/* Track container */}
       <div className="relative bg-track-dark rounded-3xl p-6 border border-border overflow-hidden h-40">
-        {/* Road surface */}
-        <div className="absolute inset-4 bg-gradient-to-r from-muted/40 via-muted/60 to-muted/40 rounded-2xl" />
+        {/* Road surface with gradient */}
+        <div className="absolute inset-4 bg-gradient-to-r from-muted/30 via-muted/50 to-muted/30 rounded-2xl" />
+        
+        {/* Road edge lines */}
+        <div className="absolute left-4 right-4 top-6 h-1 bg-foreground/30 rounded-full" />
+        <div className="absolute left-4 right-4 bottom-6 h-1 bg-foreground/30 rounded-full" />
         
         {/* Road lane markings - dashed center line */}
         <div className="absolute inset-y-0 left-16 right-16 flex items-center">
@@ -41,7 +45,7 @@ const RaceTrack = ({ playerDistance, maxDistance, lastAnswerResult }: RaceTrackP
         </div>
         <span className="absolute right-4 top-1 text-xs font-racing text-muted-foreground">🏁 FINISH</span>
 
-        {/* Player car - BIG, facing right towards finish */}
+        {/* Player car - facing right towards finish */}
         <motion.div
           className={`absolute top-1/2 -translate-y-1/2 z-10 ${
             lastAnswerResult === 'correct' ? 'animate-car-move' : ''
@@ -81,18 +85,18 @@ const RaceTrack = ({ playerDistance, maxDistance, lastAnswerResult }: RaceTrackP
             </motion.div>
           )}
           
-          {/* The car - facing right (towards finish line) */}
-          <span className="relative text-6xl drop-shadow-lg" style={{ transform: 'scaleX(-1)' }}>🏎️</span>
+          {/* The car - using 🚗 which naturally faces right */}
+          <span className="relative text-6xl drop-shadow-lg">🚗</span>
           
           {/* Exhaust smoke effect */}
           {lastAnswerResult === 'correct' && (
-            <motion.div className="absolute left-full top-1/2 -translate-y-1/2 ml-1">
+            <motion.div className="absolute right-full top-1/2 -translate-y-1/2 mr-1">
               {[...Array(3)].map((_, i) => (
                 <motion.div
                   key={i}
                   className="absolute w-3 h-3 rounded-full bg-muted-foreground/40"
                   initial={{ scale: 0.5, opacity: 0.8, x: 0 }}
-                  animate={{ scale: 2, opacity: 0, x: -30, y: (i - 1) * 10 }}
+                  animate={{ scale: 2, opacity: 0, x: -40, y: (i - 1) * 10 }}
                   transition={{ duration: 0.6, delay: i * 0.1 }}
                 />
               ))}

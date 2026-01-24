@@ -1,6 +1,6 @@
 import { motion } from 'framer-motion';
 import { Button } from '@/components/ui/button';
-import { Trophy, Target, Zap, Clock, RotateCcw, Share2 } from 'lucide-react';
+import { Trophy, Target, Zap, Clock, RotateCcw, Share2, Medal } from 'lucide-react';
 import Confetti from './Confetti';
 
 interface FinishScreenProps {
@@ -12,9 +12,10 @@ interface FinishScreenProps {
     streakBonus: number;
     totalTime: number;
   };
-  position: number;
+  playerName: string;
   maxDistance: number;
   onRestart: () => void;
+  onShowLeaderboard: () => void;
 }
 
 const formatTime = (seconds: number): string => {
@@ -23,43 +24,29 @@ const formatTime = (seconds: number): string => {
   return `${mins}:${secs.toString().padStart(2, '0')}`;
 };
 
-const FinishScreen = ({ score, position, maxDistance, onRestart }: FinishScreenProps) => {
+const FinishScreen = ({ score, playerName, maxDistance, onRestart, onShowLeaderboard }: FinishScreenProps) => {
   const accuracy = Math.round((score.correctAnswers / 30) * 100);
-  const isWinner = position === 1;
-  const isTopThree = position <= 3;
-
-  const getPositionMessage = () => {
-    switch (position) {
-      case 1: return { text: 'CHAMPION!', emoji: '🏆', color: 'text-warning' };
-      case 2: return { text: 'SILVER!', emoji: '🥈', color: 'text-muted-foreground' };
-      case 3: return { text: 'BRONZE!', emoji: '🥉', color: 'text-secondary' };
-      default: return { text: `${position}th Place`, emoji: '🏁', color: 'text-muted-foreground' };
-    }
-  };
-
-  const positionInfo = getPositionMessage();
+  const isGoodScore = accuracy >= 70;
 
   return (
     <div className="min-h-screen flex flex-col items-center justify-center p-4 relative overflow-hidden">
-      {/* Confetti for winners */}
-      {isTopThree && <Confetti />}
+      {/* Confetti for good scores */}
+      {isGoodScore && <Confetti />}
 
       {/* Background celebration */}
-      {isWinner && (
+      <motion.div
+        className="absolute inset-0"
+        initial={{ opacity: 0 }}
+        animate={{ opacity: 1 }}
+      >
         <motion.div
-          className="absolute inset-0"
-          initial={{ opacity: 0 }}
-          animate={{ opacity: 1 }}
-        >
-          <motion.div
-            className="absolute w-full h-full bg-gradient-to-r from-warning/5 via-transparent to-warning/5"
-            animate={{
-              backgroundPosition: ['0% 0%', '100% 0%', '0% 0%'],
-            }}
-            transition={{ duration: 5, repeat: Infinity }}
-          />
-        </motion.div>
-      )}
+          className="absolute w-full h-full bg-gradient-to-r from-primary/5 via-transparent to-secondary/5"
+          animate={{
+            backgroundPosition: ['0% 0%', '100% 0%', '0% 0%'],
+          }}
+          transition={{ duration: 5, repeat: Infinity }}
+        />
+      </motion.div>
 
       <motion.div
         className="text-center z-10 max-w-lg w-full"
@@ -67,7 +54,7 @@ const FinishScreen = ({ score, position, maxDistance, onRestart }: FinishScreenP
         animate={{ opacity: 1, scale: 1 }}
         transition={{ duration: 0.5 }}
       >
-        {/* Trophy/Position */}
+        {/* Trophy */}
         <motion.div
           className="mb-6"
           initial={{ y: -50, opacity: 0 }}
@@ -76,33 +63,42 @@ const FinishScreen = ({ score, position, maxDistance, onRestart }: FinishScreenP
         >
           <motion.span
             className="text-8xl inline-block"
-            animate={isWinner ? {
+            animate={{
               rotate: [0, -10, 10, -10, 10, 0],
               scale: [1, 1.1, 1],
-            } : {}}
+            }}
             transition={{ duration: 1, delay: 0.5 }}
           >
-            {positionInfo.emoji}
+            {isGoodScore ? '🏆' : '🏁'}
           </motion.span>
         </motion.div>
 
-        {/* Position text */}
+        {/* Player name and message */}
         <motion.h1
-          className={`font-racing text-5xl md:text-6xl font-bold mb-2 ${positionInfo.color} ${isWinner ? 'neon-text' : ''}`}
+          className={`font-racing text-4xl md:text-5xl font-bold mb-2 ${isGoodScore ? 'text-warning neon-text' : 'text-primary'}`}
           initial={{ opacity: 0 }}
           animate={{ opacity: 1 }}
           transition={{ delay: 0.4 }}
         >
-          {positionInfo.text}
+          {isGoodScore ? 'GREAT RACE!' : 'RACE COMPLETE!'}
         </motion.h1>
 
         <motion.p
-          className="text-xl text-muted-foreground mb-8"
+          className="text-xl text-muted-foreground mb-2"
           initial={{ opacity: 0 }}
           animate={{ opacity: 1 }}
           transition={{ delay: 0.5 }}
         >
-          Race Complete!
+          Well done, <span className="text-primary font-racing">{playerName}</span>!
+        </motion.p>
+
+        <motion.p
+          className="text-lg text-muted-foreground mb-6"
+          initial={{ opacity: 0 }}
+          animate={{ opacity: 1 }}
+          transition={{ delay: 0.5 }}
+        >
+          Your score has been saved to the leaderboard!
         </motion.p>
 
         {/* Total Time - Featured */}
@@ -143,13 +139,13 @@ const FinishScreen = ({ score, position, maxDistance, onRestart }: FinishScreenP
           <div className="gradient-card p-4 rounded-xl border border-border">
             <div className="flex items-center justify-center gap-2 mb-2">
               <Trophy className="w-5 h-5 text-primary" />
-              <span className="text-sm text-muted-foreground">Distance</span>
+              <span className="text-sm text-muted-foreground">Score</span>
             </div>
             <span className="font-racing text-3xl text-primary">
               {Math.round(score.totalDistance)}
             </span>
             <p className="text-xs text-muted-foreground mt-1">
-              / {maxDistance} total
+              points earned
             </p>
           </div>
 
@@ -197,20 +193,30 @@ const FinishScreen = ({ score, position, maxDistance, onRestart }: FinishScreenP
           </Button>
           
           <Button
+            onClick={onShowLeaderboard}
             variant="outline"
+            size="lg"
+            className="font-racing text-lg px-8"
+          >
+            <Medal className="w-5 h-5 mr-2" />
+            Leaderboard
+          </Button>
+
+          <Button
+            variant="ghost"
             size="lg"
             className="font-racing text-lg px-8"
             onClick={() => {
               if (navigator.share) {
                 navigator.share({
                   title: 'Quiz Racer',
-                  text: `I finished ${position}${position === 1 ? 'st' : position === 2 ? 'nd' : position === 3 ? 'rd' : 'th'} with ${accuracy}% accuracy in Quiz Racer! 🏎️`,
+                  text: `I scored ${Math.round(score.totalDistance)} points with ${accuracy}% accuracy in Quiz Racer! 🚗`,
                 });
               }
             }}
           >
             <Share2 className="w-5 h-5 mr-2" />
-            Share Result
+            Share
           </Button>
         </motion.div>
       </motion.div>
