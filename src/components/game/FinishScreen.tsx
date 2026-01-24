@@ -10,11 +10,18 @@ interface FinishScreenProps {
     wrongAnswers: number;
     averageTime: number;
     streakBonus: number;
+    totalTime: number;
   };
   position: number;
   maxDistance: number;
   onRestart: () => void;
 }
+
+const formatTime = (seconds: number): string => {
+  const mins = Math.floor(seconds / 60);
+  const secs = Math.floor(seconds % 60);
+  return `${mins}:${secs.toString().padStart(2, '0')}`;
+};
 
 const FinishScreen = ({ score, position, maxDistance, onRestart }: FinishScreenProps) => {
   const accuracy = Math.round((score.correctAnswers / 30) * 100);
@@ -97,6 +104,23 @@ const FinishScreen = ({ score, position, maxDistance, onRestart }: FinishScreenP
         >
           Race Complete!
         </motion.p>
+
+        {/* Total Time - Featured */}
+        <motion.div
+          className="mb-6 gradient-card p-6 rounded-2xl border-2 border-primary/50 neon-box-cyan"
+          initial={{ opacity: 0, scale: 0.9 }}
+          animate={{ opacity: 1, scale: 1 }}
+          transition={{ delay: 0.5 }}
+        >
+          <div className="flex items-center justify-center gap-3 mb-2">
+            <Clock className="w-8 h-8 text-primary" />
+            <span className="text-lg text-muted-foreground font-medium">Total Race Time</span>
+          </div>
+          <span className="font-racing text-5xl text-primary neon-text">{formatTime(score.totalTime)}</span>
+          <p className="text-sm text-muted-foreground mt-2">
+            {score.totalTime < 180 ? '⚡ Lightning Fast!' : score.totalTime < 300 ? '🔥 Great Speed!' : '🏁 Race Complete!'}
+          </p>
+        </motion.div>
 
         {/* Stats grid */}
         <motion.div

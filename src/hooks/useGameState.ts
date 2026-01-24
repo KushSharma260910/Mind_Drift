@@ -10,6 +10,7 @@ interface GameScore {
   wrongAnswers: number;
   averageTime: number;
   streakBonus: number;
+  totalTime: number;
 }
 
 interface Competitor {
@@ -48,10 +49,12 @@ export const useGameState = () => {
     wrongAnswers: 0,
     averageTime: 0,
     streakBonus: 0,
+    totalTime: 0,
   });
   const [answerTimes, setAnswerTimes] = useState<number[]>([]);
   const [soundEnabled, setSoundEnabled] = useState(true);
   const [isAnswering, setIsAnswering] = useState(false);
+  const [gameStartTime, setGameStartTime] = useState<number>(0);
   
   const timerRef = useRef<NodeJS.Timeout | null>(null);
   const competitorTimerRef = useRef<NodeJS.Timeout | null>(null);
@@ -99,9 +102,11 @@ export const useGameState = () => {
       wrongAnswers: 0,
       averageTime: 0,
       streakBonus: 0,
+      totalTime: 0,
     });
     setAnswerTimes([]);
     setLastAnswerResult(null);
+    setGameStartTime(Date.now());
     setGameState('playing');
   }, []);
 
@@ -143,11 +148,12 @@ export const useGameState = () => {
       setIsAnswering(false);
       
       if (currentQuestionIndex + 1 >= totalQuestions) {
-        // Calculate final average time
+        // Calculate final stats
         const avgTime = answerTimes.length > 0 
           ? answerTimes.reduce((a, b) => a + b, 0) / answerTimes.length 
           : 0;
-        setScore(prev => ({ ...prev, averageTime: avgTime }));
+        const totalTimeTaken = (Date.now() - gameStartTime) / 1000; // in seconds
+        setScore(prev => ({ ...prev, averageTime: avgTime, totalTime: totalTimeTaken }));
         setGameState('finished');
       } else {
         setCurrentQuestionIndex(prev => prev + 1);
