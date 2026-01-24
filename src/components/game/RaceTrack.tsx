@@ -41,7 +41,7 @@ const RaceTrack = ({ playerDistance, maxDistance, lastAnswerResult }: RaceTrackP
         </div>
         <span className="absolute right-4 top-1 text-xs font-racing text-muted-foreground">🏁 FINISH</span>
 
-        {/* Player car - BIG */}
+        {/* Player car - BIG, facing right towards finish */}
         <motion.div
           className={`absolute top-1/2 -translate-y-1/2 z-10 ${
             lastAnswerResult === 'correct' ? 'animate-car-move' : ''
@@ -66,23 +66,38 @@ const RaceTrack = ({ playerDistance, maxDistance, lastAnswerResult }: RaceTrackP
             transition={{ duration: 0.5 }}
           />
           
-          {/* Speed lines when moving */}
+          {/* Speed lines behind the car when moving */}
           {lastAnswerResult === 'correct' && (
-            <motion.div className="absolute right-full top-1/2 -translate-y-1/2 flex flex-col gap-1">
-              {[...Array(3)].map((_, i) => (
+            <motion.div className="absolute right-full top-1/2 -translate-y-1/2 flex flex-col gap-1 mr-2">
+              {[...Array(4)].map((_, i) => (
                 <motion.div
                   key={i}
-                  className="h-0.5 bg-gradient-to-l from-primary to-transparent rounded"
+                  className="h-1 bg-gradient-to-l from-primary via-accent to-transparent rounded-full"
                   initial={{ width: 0, opacity: 1 }}
-                  animate={{ width: 40, opacity: 0 }}
-                  transition={{ duration: 0.4, delay: i * 0.1 }}
+                  animate={{ width: 60, opacity: 0 }}
+                  transition={{ duration: 0.5, delay: i * 0.08 }}
                 />
               ))}
             </motion.div>
           )}
           
-          {/* The car emoji - BIG */}
-          <span className="relative text-6xl drop-shadow-lg">🏎️</span>
+          {/* The car - facing right (towards finish line) */}
+          <span className="relative text-6xl drop-shadow-lg" style={{ transform: 'scaleX(-1)' }}>🏎️</span>
+          
+          {/* Exhaust smoke effect */}
+          {lastAnswerResult === 'correct' && (
+            <motion.div className="absolute left-full top-1/2 -translate-y-1/2 ml-1">
+              {[...Array(3)].map((_, i) => (
+                <motion.div
+                  key={i}
+                  className="absolute w-3 h-3 rounded-full bg-muted-foreground/40"
+                  initial={{ scale: 0.5, opacity: 0.8, x: 0 }}
+                  animate={{ scale: 2, opacity: 0, x: -30, y: (i - 1) * 10 }}
+                  transition={{ duration: 0.6, delay: i * 0.1 }}
+                />
+              ))}
+            </motion.div>
+          )}
         </motion.div>
       </div>
 
