@@ -54,10 +54,10 @@ export const useGameState = () => {
   const [answerTimes, setAnswerTimes] = useState<number[]>([]);
   const [soundEnabled, setSoundEnabled] = useState(true);
   const [isAnswering, setIsAnswering] = useState(false);
-  const [gameStartTime, setGameStartTime] = useState<number>(0);
   
   const timerRef = useRef<NodeJS.Timeout | null>(null);
   const competitorTimerRef = useRef<NodeJS.Timeout | null>(null);
+  const gameStartTimeRef = useRef<number>(0);
 
   const currentQuestion = questions[currentQuestionIndex];
   const totalQuestions = 30;
@@ -106,7 +106,7 @@ export const useGameState = () => {
     });
     setAnswerTimes([]);
     setLastAnswerResult(null);
-    setGameStartTime(Date.now());
+    gameStartTimeRef.current = Date.now();
     setGameState('playing');
   }, []);
 
@@ -152,7 +152,7 @@ export const useGameState = () => {
         const avgTime = answerTimes.length > 0 
           ? answerTimes.reduce((a, b) => a + b, 0) / answerTimes.length 
           : 0;
-        const totalTimeTaken = (Date.now() - gameStartTime) / 1000; // in seconds
+        const totalTimeTaken = (Date.now() - gameStartTimeRef.current) / 1000;
         setScore(prev => ({ ...prev, averageTime: avgTime, totalTime: totalTimeTaken }));
         setGameState('finished');
       } else {
