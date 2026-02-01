@@ -1,3 +1,4 @@
+import { useEffect } from 'react';
 import { Volume2, VolumeX } from 'lucide-react';
 import { motion } from 'framer-motion';
 import StartScreen from './StartScreen';
@@ -7,6 +8,7 @@ import Timer from './Timer';
 import FinishScreen from './FinishScreen';
 import Leaderboard from './Leaderboard';
 import { useGameState } from '@/hooks/useGameState';
+import { useSoundEffects } from '@/hooks/useSoundEffects';
 
 const RacingGame = () => {
   const {
@@ -29,6 +31,41 @@ const RacingGame = () => {
     setSoundEnabled,
     showLeaderboard,
   } = useGameState();
+
+  const {
+    playCorrect,
+    playWrong,
+    playAccelerate,
+    playVictory,
+    startBackgroundMusic,
+    stopBackgroundMusic,
+  } = useSoundEffects(soundEnabled);
+
+  // Play sounds based on answer result
+  useEffect(() => {
+    if (lastAnswerResult === 'correct') {
+      playCorrect();
+      playAccelerate();
+    } else if (lastAnswerResult === 'wrong') {
+      playWrong();
+    }
+  }, [lastAnswerResult, playCorrect, playWrong, playAccelerate]);
+
+  // Handle background music based on game state
+  useEffect(() => {
+    if (gameState === 'playing') {
+      startBackgroundMusic();
+    } else {
+      stopBackgroundMusic();
+    }
+  }, [gameState, startBackgroundMusic, stopBackgroundMusic]);
+
+  // Play victory sound when game finishes
+  useEffect(() => {
+    if (gameState === 'finished') {
+      playVictory();
+    }
+  }, [gameState, playVictory]);
 
   if (gameState === 'start') {
     return (

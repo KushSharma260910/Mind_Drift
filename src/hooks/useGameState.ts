@@ -43,14 +43,19 @@ export const useGameState = () => {
   const totalQuestions = 30;
   const maxDistance = 1000;
 
-  const calculateDistance = (timeRemaining: number, isCorrect: boolean): number => {
+  // Each correct answer gives exactly 1/30 of the track distance
+  // This ensures the car only reaches finish line after 30 correct answers
+  const calculateDistance = (isCorrect: boolean): number => {
     if (!isCorrect) return 0;
-    
-    const baseDistance = maxDistance / totalQuestions;
-    const timeBonus = (timeRemaining / 8) * 10;
+    return maxDistance / totalQuestions; // Exactly 33.33... per correct answer
+  };
+
+  // Score calculation includes time bonus and streak for leaderboard ranking
+  const calculateScore = (timeRemaining: number): number => {
+    const baseScore = 100;
+    const timeBonus = Math.round((timeRemaining / 8) * 50);
     const streakMultiplier = 1 + (streak * 0.1);
-    
-    return Math.round((baseDistance + timeBonus) * streakMultiplier);
+    return Math.round((baseScore + timeBonus) * streakMultiplier);
   };
 
   const saveToLeaderboard = async (finalScore: GameScore) => {
@@ -105,14 +110,15 @@ export const useGameState = () => {
     setAnswerTimes(prev => [...prev, answerTime]);
     
     if (isCorrect) {
-      const distanceGained = calculateDistance(timeLeft, true);
+      const distanceGained = calculateDistance(true);
+      const scoreGained = calculateScore(timeLeft);
       setPlayerDistance(prev => Math.min(prev + distanceGained, maxDistance));
       setStreak(prev => prev + 1);
       setScore(prev => ({
         ...prev,
         correctAnswers: prev.correctAnswers + 1,
-        totalDistance: prev.totalDistance + distanceGained,
-        streakBonus: prev.streakBonus + (streak > 0 ? distanceGained * 0.1 : 0),
+        totalDistance: prev.totalDistance + scoreGained,
+        streakBonus: prev.streakBonus + (streak > 0 ? scoreGained * 0.1 : 0),
       }));
     } else {
       setStreak(0);
@@ -135,7 +141,7 @@ export const useGameState = () => {
         const finalScore = {
           ...score,
           correctAnswers: score.correctAnswers + (isCorrect ? 1 : 0),
-          totalDistance: score.totalDistance + (isCorrect ? calculateDistance(timeLeft, true) : 0),
+          totalDistance: score.totalDistance + (isCorrect ? calculateScore(timeLeft) : 0),
           averageTime: avgTime,
           totalTime: totalTimeTaken,
         };
