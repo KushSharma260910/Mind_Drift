@@ -20,7 +20,7 @@ export const useGameState = () => {
   const [playerName, setPlayerName] = useState('');
   const [questions, setQuestions] = useState<Question[]>([]);
   const [currentQuestionIndex, setCurrentQuestionIndex] = useState(0);
-  const [timeLeft, setTimeLeft] = useState(8);
+  const [timeLeft, setTimeLeft] = useState(15);
   const [playerDistance, setPlayerDistance] = useState(0);
   const [lastAnswerResult, setLastAnswerResult] = useState<AnswerResult>(null);
   const [streak, setStreak] = useState(0);
@@ -53,7 +53,7 @@ export const useGameState = () => {
   // Score calculation includes time bonus and streak for leaderboard ranking
   const calculateScore = (timeRemaining: number): number => {
     const baseScore = 100;
-    const timeBonus = Math.round((timeRemaining / 8) * 50);
+    const timeBonus = Math.round((timeRemaining / 15) * 50);
     const streakMultiplier = 1 + (streak * 0.1);
     return Math.round((baseScore + timeBonus) * streakMultiplier);
   };
@@ -83,7 +83,7 @@ export const useGameState = () => {
     setQuestions(generateGameQuestions(selectedAgeGroup, totalQuestions));
     setCurrentQuestionIndex(0);
     setPlayerDistance(0);
-    setTimeLeft(8);
+    setTimeLeft(15);
     setStreak(0);
     setScore({
       totalDistance: 0,
@@ -151,7 +151,7 @@ export const useGameState = () => {
         setGameState('finished');
       } else {
         setCurrentQuestionIndex(prev => prev + 1);
-        setTimeLeft(8);
+        setTimeLeft(15);
       }
     }, 1000);
   }, [currentQuestion, currentQuestionIndex, isAnswering, timeLeft, streak, answerTimes, score]);

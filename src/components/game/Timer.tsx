@@ -11,12 +11,12 @@ const Timer = ({ timeLeft, maxTime }: TimerProps) => {
   const percentage = (timeLeft / maxTime) * 100;
   
   useEffect(() => {
-    setIsUrgent(timeLeft <= 3);
+    setIsUrgent(timeLeft <= 5);
   }, [timeLeft]);
 
   const getColor = () => {
-    if (timeLeft <= 3) return 'hsl(var(--destructive))';
-    if (timeLeft <= 5) return 'hsl(var(--warning))';
+    if (timeLeft <= 5) return 'hsl(var(--destructive))';
+    if (timeLeft <= 10) return 'hsl(var(--warning))';
     return 'hsl(var(--primary))';
   };
 

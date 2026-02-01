@@ -11,6 +11,7 @@ interface QuizCardProps {
   lastAnswerResult: AnswerResult;
   isAnswering: boolean;
   streak: number;
+  timeLeft: number;
 }
 
 const QuizCard = ({ 
@@ -21,7 +22,10 @@ const QuizCard = ({
   lastAnswerResult,
   isAnswering,
   streak,
+  timeLeft,
 }: QuizCardProps) => {
+  const isUrgent = timeLeft <= 5;
+  const isWarning = timeLeft <= 10 && timeLeft > 5;
   const getDifficultyColor = (difficulty: string) => {
     switch (difficulty) {
       case 'easy': return 'text-success bg-success/10 border-success/30';
@@ -68,10 +72,25 @@ const QuizCard = ({
       </div>
 
       {/* Question card */}
-      <div className={`gradient-card rounded-2xl p-6 border border-border shadow-card relative overflow-hidden ${
-        lastAnswerResult === 'correct' ? 'animate-glow-success' : 
-        lastAnswerResult === 'wrong' ? 'animate-glow-error' : ''
+      <div className={`gradient-card rounded-2xl p-6 border-2 shadow-card relative overflow-hidden transition-colors ${
+        lastAnswerResult === 'correct' ? 'animate-glow-success border-success' : 
+        lastAnswerResult === 'wrong' ? 'animate-glow-error border-destructive' : 
+        isUrgent ? 'border-destructive animate-pulse' :
+        isWarning ? 'border-warning' : 'border-border'
       }`}>
+        {/* Timer display on top of question */}
+        <motion.div 
+          className={`absolute top-4 right-4 flex items-center gap-2 px-4 py-2 rounded-full font-racing text-lg ${
+            isUrgent ? 'bg-destructive text-destructive-foreground animate-pulse' :
+            isWarning ? 'bg-warning text-warning-foreground' :
+            'bg-primary/20 text-primary'
+          }`}
+          animate={isUrgent ? { scale: [1, 1.05, 1] } : {}}
+          transition={{ duration: 0.5, repeat: isUrgent ? Infinity : 0 }}
+        >
+          <span className="text-2xl">⏱️</span>
+          <span className="text-2xl font-bold">{timeLeft}s</span>
+        </motion.div>
         {/* Result overlay */}
         {lastAnswerResult && (
           <motion.div
