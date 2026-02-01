@@ -35,6 +35,7 @@ const RacingGame = () => {
   const {
     playCorrect,
     playWrong,
+    playTick,
     playAccelerate,
     playVictory,
     startBackgroundMusic,
@@ -50,6 +51,13 @@ const RacingGame = () => {
       playWrong();
     }
   }, [lastAnswerResult, playCorrect, playWrong, playAccelerate]);
+
+  // Play tick sound on timer countdown
+  useEffect(() => {
+    if (gameState === 'playing' && !isAnswering && timeLeft > 0) {
+      playTick(timeLeft);
+    }
+  }, [timeLeft, gameState, isAnswering, playTick]);
 
   // Handle background music based on game state
   useEffect(() => {
@@ -113,7 +121,7 @@ const RacingGame = () => {
         
         <div className="flex items-center gap-4">
           {/* Timer */}
-          <Timer timeLeft={timeLeft} maxTime={8} />
+          <Timer timeLeft={timeLeft} maxTime={15} />
           
           {/* Sound toggle */}
           <motion.button
@@ -176,6 +184,7 @@ const RacingGame = () => {
             lastAnswerResult={lastAnswerResult}
             isAnswering={isAnswering}
             streak={streak}
+            timeLeft={timeLeft}
           />
         )}
       </main>
