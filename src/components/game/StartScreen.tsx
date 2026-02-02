@@ -113,7 +113,7 @@ const StartScreen = ({ onStart, soundEnabled, onToggleSound }: StartScreenProps)
         >
           <div className="flex items-center gap-2 px-4 py-2 rounded-full bg-card/60 backdrop-blur-sm border border-border">
             <Brain className="w-4 h-4 text-primary" />
-            <span className="text-sm">30 Questions</span>
+            <span className="text-sm">20 Questions</span>
           </div>
           <div className="flex items-center gap-2 px-4 py-2 rounded-full bg-card/60 backdrop-blur-sm border border-border">
             <Zap className="w-4 h-4 text-secondary" />

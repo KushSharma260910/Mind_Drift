@@ -80,7 +80,7 @@ const QuizCard = ({
       }`}>
         {/* Timer display on top of question */}
         <motion.div 
-          className={`absolute top-4 right-4 flex items-center gap-2 px-4 py-2 rounded-full font-racing text-lg ${
+          className={`flex items-center justify-center gap-2 px-4 py-2 rounded-full font-racing text-lg mb-4 ${
             isUrgent ? 'bg-destructive text-destructive-foreground animate-pulse' :
             isWarning ? 'bg-warning text-warning-foreground' :
             'bg-primary/20 text-primary'
