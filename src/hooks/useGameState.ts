@@ -40,7 +40,7 @@ export const useGameState = () => {
   const gameStartTimeRef = useRef<number>(0);
 
   const currentQuestion = questions[currentQuestionIndex];
-  const totalQuestions = 30;
+  const totalQuestions = 20;
   const maxDistance = 1000;
 
   // Each correct answer gives exactly 1/30 of the track distance
