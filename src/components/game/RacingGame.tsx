@@ -35,11 +35,8 @@ const RacingGame = () => {
   const {
     playCorrect,
     playWrong,
-    playTick,
     playAccelerate,
     playVictory,
-    startBackgroundMusic,
-    stopBackgroundMusic,
   } = useSoundEffects(soundEnabled);
 
   // Play sounds based on answer result
@@ -51,22 +48,6 @@ const RacingGame = () => {
       playWrong();
     }
   }, [lastAnswerResult, playCorrect, playWrong, playAccelerate]);
-
-  // Play tick sound on timer countdown
-  useEffect(() => {
-    if (gameState === 'playing' && !isAnswering && timeLeft > 0) {
-      playTick(timeLeft);
-    }
-  }, [timeLeft, gameState, isAnswering, playTick]);
-
-  // Handle background music based on game state
-  useEffect(() => {
-    if (gameState === 'playing') {
-      startBackgroundMusic();
-    } else {
-      stopBackgroundMusic();
-    }
-  }, [gameState, startBackgroundMusic, stopBackgroundMusic]);
 
   // Play victory sound when game finishes
   useEffect(() => {
@@ -120,9 +101,6 @@ const RacingGame = () => {
         </div>
         
         <div className="flex items-center gap-4">
-          {/* Timer */}
-          <Timer timeLeft={timeLeft} maxTime={15} />
-          
           {/* Sound toggle */}
           <motion.button
             onClick={() => setSoundEnabled(!soundEnabled)}
