@@ -166,7 +166,7 @@ export const useSoundEffects = (enabled: boolean = true) => {
     }
   }, [enabled]);
 
-  // Start intense racing background ambiance
+  // Start intense racing background ambiance with crowd cheering
   const startBackgroundMusic = useCallback(() => {
     if (!enabled || isPlayingBackgroundRef.current) return;
     
@@ -181,29 +181,18 @@ export const useSoundEffects = (enabled: boolean = true) => {
       masterGain.gain.linearRampToValueAtTime(1, ctx.currentTime + 0.5);
       masterGain.connect(ctx.destination);
       
-      // Deep bass engine rumble
+      // Deep bass engine rumble - reduced volume
       const bassOsc = ctx.createOscillator();
       const bassGain = ctx.createGain();
       bassOsc.type = 'sawtooth';
       bassOsc.frequency.setValueAtTime(45, ctx.currentTime);
-      bassGain.gain.setValueAtTime(0.08, ctx.currentTime);
+      bassGain.gain.setValueAtTime(0.04, ctx.currentTime);
       bassOsc.connect(bassGain);
       bassGain.connect(masterGain);
       oscillators.push(bassOsc);
       gains.push(bassGain);
       
-      // Engine mid-frequency
-      const midOsc = ctx.createOscillator();
-      const midGain = ctx.createGain();
-      midOsc.type = 'sawtooth';
-      midOsc.frequency.setValueAtTime(90, ctx.currentTime);
-      midGain.gain.setValueAtTime(0.04, ctx.currentTime);
-      midOsc.connect(midGain);
-      midGain.connect(masterGain);
-      oscillators.push(midOsc);
-      gains.push(midGain);
-      
-      // LFO for engine-like pulsing on bass
+      // LFO for engine-like pulsing
       const lfo1 = ctx.createOscillator();
       const lfo1Gain = ctx.createGain();
       lfo1.frequency.setValueAtTime(6, ctx.currentTime);
@@ -212,67 +201,123 @@ export const useSoundEffects = (enabled: boolean = true) => {
       lfo1Gain.connect(bassOsc.frequency);
       oscillators.push(lfo1);
       
-      // LFO for mid variation
-      const lfo2 = ctx.createOscillator();
-      const lfo2Gain = ctx.createGain();
-      lfo2.frequency.setValueAtTime(4, ctx.currentTime);
-      lfo2Gain.gain.setValueAtTime(15, ctx.currentTime);
-      lfo2.connect(lfo2Gain);
-      lfo2Gain.connect(midOsc.frequency);
-      oscillators.push(lfo2);
+      // Create crowd roar noise - main crowd ambiance
+      const crowdBufferSize = ctx.sampleRate * 10;
+      const crowdBuffer = ctx.createBuffer(2, crowdBufferSize, ctx.sampleRate);
+      const leftChannel = crowdBuffer.getChannelData(0);
+      const rightChannel = crowdBuffer.getChannelData(1);
       
-      // High-frequency racing whine
-      const whineOsc = ctx.createOscillator();
-      const whineGain = ctx.createGain();
-      const whineFilter = ctx.createBiquadFilter();
-      whineOsc.type = 'sawtooth';
-      whineOsc.frequency.setValueAtTime(400, ctx.currentTime);
-      whineFilter.type = 'bandpass';
-      whineFilter.frequency.setValueAtTime(600, ctx.currentTime);
-      whineFilter.Q.setValueAtTime(5, ctx.currentTime);
-      whineGain.gain.setValueAtTime(0.02, ctx.currentTime);
-      whineOsc.connect(whineFilter);
-      whineFilter.connect(whineGain);
-      whineGain.connect(masterGain);
-      oscillators.push(whineOsc);
-      gains.push(whineGain);
-      
-      // LFO for whine variation (simulates RPM changes)
-      const lfo3 = ctx.createOscillator();
-      const lfo3Gain = ctx.createGain();
-      lfo3.frequency.setValueAtTime(0.5, ctx.currentTime);
-      lfo3Gain.gain.setValueAtTime(100, ctx.currentTime);
-      lfo3.connect(lfo3Gain);
-      lfo3Gain.connect(whineOsc.frequency);
-      oscillators.push(lfo3);
-      
-      // Crowd/wind noise using filtered noise
-      const bufferSize = ctx.sampleRate * 10;
-      const noiseBuffer = ctx.createBuffer(1, bufferSize, ctx.sampleRate);
-      const output = noiseBuffer.getChannelData(0);
-      for (let i = 0; i < bufferSize; i++) {
-        output[i] = Math.random() * 2 - 1;
+      // Generate crowd-like noise with varying intensity
+      for (let i = 0; i < crowdBufferSize; i++) {
+        const wave = Math.sin(i / ctx.sampleRate * Math.PI * 2 * 0.3) * 0.5 + 0.5;
+        leftChannel[i] = (Math.random() * 2 - 1) * (0.5 + wave * 0.5);
+        rightChannel[i] = (Math.random() * 2 - 1) * (0.5 + wave * 0.5);
       }
       
-      const noise = ctx.createBufferSource();
-      noise.buffer = noiseBuffer;
-      noise.loop = true;
+      const crowdNoise = ctx.createBufferSource();
+      crowdNoise.buffer = crowdBuffer;
+      crowdNoise.loop = true;
       
-      const noiseFilter = ctx.createBiquadFilter();
-      noiseFilter.type = 'bandpass';
-      noiseFilter.frequency.setValueAtTime(800, ctx.currentTime);
-      noiseFilter.Q.setValueAtTime(0.8, ctx.currentTime);
+      // Filter to make it sound like distant crowd
+      const crowdFilter = ctx.createBiquadFilter();
+      crowdFilter.type = 'bandpass';
+      crowdFilter.frequency.setValueAtTime(1200, ctx.currentTime);
+      crowdFilter.Q.setValueAtTime(0.5, ctx.currentTime);
       
-      const noiseGain = ctx.createGain();
-      noiseGain.gain.setValueAtTime(0.03, ctx.currentTime);
+      // Add modulation to crowd filter for wave-like cheering
+      const crowdLfo = ctx.createOscillator();
+      const crowdLfoGain = ctx.createGain();
+      crowdLfo.frequency.setValueAtTime(0.15, ctx.currentTime);
+      crowdLfoGain.gain.setValueAtTime(400, ctx.currentTime);
+      crowdLfo.connect(crowdLfoGain);
+      crowdLfoGain.connect(crowdFilter.frequency);
+      oscillators.push(crowdLfo);
       
-      noise.connect(noiseFilter);
-      noiseFilter.connect(noiseGain);
-      noiseGain.connect(masterGain);
+      const crowdGain = ctx.createGain();
+      crowdGain.gain.setValueAtTime(0.12, ctx.currentTime);
       
-      // Start all oscillators
+      crowdNoise.connect(crowdFilter);
+      crowdFilter.connect(crowdGain);
+      crowdGain.connect(masterGain);
+      
+      // High-pitched whistles and hoots layer
+      const hootBufferSize = ctx.sampleRate * 8;
+      const hootBuffer = ctx.createBuffer(1, hootBufferSize, ctx.sampleRate);
+      const hootData = hootBuffer.getChannelData(0);
+      
+      // Create intermittent whistle-like sounds
+      for (let i = 0; i < hootBufferSize; i++) {
+        const t = i / ctx.sampleRate;
+        const whistleFreq = 1800 + Math.sin(t * 3) * 400;
+        const whistleEnv = Math.sin(t * Math.PI * 1.5) > 0.7 ? 1 : 0;
+        hootData[i] = Math.sin(t * whistleFreq * Math.PI * 2) * whistleEnv * 0.3 * Math.random();
+      }
+      
+      const hootNoise = ctx.createBufferSource();
+      hootNoise.buffer = hootBuffer;
+      hootNoise.loop = true;
+      
+      const hootFilter = ctx.createBiquadFilter();
+      hootFilter.type = 'highpass';
+      hootFilter.frequency.setValueAtTime(1500, ctx.currentTime);
+      
+      const hootGain = ctx.createGain();
+      hootGain.gain.setValueAtTime(0.06, ctx.currentTime);
+      
+      hootNoise.connect(hootFilter);
+      hootFilter.connect(hootGain);
+      hootGain.connect(masterGain);
+      
+      // Rhythmic chanting/clapping layer
+      const chantOsc = ctx.createOscillator();
+      const chantGain = ctx.createGain();
+      chantOsc.type = 'triangle';
+      chantOsc.frequency.setValueAtTime(220, ctx.currentTime);
+      
+      // LFO for rhythmic pulsing (like crowd clapping)
+      const chantLfo = ctx.createOscillator();
+      const chantLfoGain = ctx.createGain();
+      chantLfo.frequency.setValueAtTime(2.5, ctx.currentTime); // ~150 BPM clapping
+      chantLfoGain.gain.setValueAtTime(1, ctx.currentTime);
+      chantLfo.connect(chantLfoGain);
+      chantLfoGain.connect(chantGain.gain);
+      chantGain.gain.setValueAtTime(0.03, ctx.currentTime);
+      
+      chantOsc.connect(chantGain);
+      chantGain.connect(masterGain);
+      oscillators.push(chantOsc);
+      oscillators.push(chantLfo);
+      gains.push(chantGain);
+      
+      // Excitement surge oscillator - rises and falls
+      const surgeOsc = ctx.createOscillator();
+      const surgeGain = ctx.createGain();
+      const surgeFilter = ctx.createBiquadFilter();
+      surgeOsc.type = 'sawtooth';
+      surgeOsc.frequency.setValueAtTime(150, ctx.currentTime);
+      surgeFilter.type = 'lowpass';
+      surgeFilter.frequency.setValueAtTime(300, ctx.currentTime);
+      
+      // Slow LFO for crowd surge effect
+      const surgeLfo = ctx.createOscillator();
+      const surgeLfoGain = ctx.createGain();
+      surgeLfo.frequency.setValueAtTime(0.08, ctx.currentTime);
+      surgeLfoGain.gain.setValueAtTime(0.04, ctx.currentTime);
+      surgeLfo.connect(surgeLfoGain);
+      surgeLfoGain.connect(surgeGain.gain);
+      surgeGain.gain.setValueAtTime(0.02, ctx.currentTime);
+      
+      surgeOsc.connect(surgeFilter);
+      surgeFilter.connect(surgeGain);
+      surgeGain.connect(masterGain);
+      oscillators.push(surgeOsc);
+      oscillators.push(surgeLfo);
+      gains.push(surgeGain);
+      
+      // Start all oscillators and noise sources
       oscillators.forEach(osc => osc.start(ctx.currentTime));
-      noise.start(ctx.currentTime);
+      crowdNoise.start(ctx.currentTime);
+      hootNoise.start(ctx.currentTime);
       
       backgroundNodesRef.current = { oscillators, gains, masterGain };
       isPlayingBackgroundRef.current = true;
