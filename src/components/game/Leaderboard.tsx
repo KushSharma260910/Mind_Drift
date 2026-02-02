@@ -1,8 +1,19 @@
 import { useEffect, useState } from 'react';
 import { motion } from 'framer-motion';
-import { Trophy, Clock, Target, Medal, ArrowLeft } from 'lucide-react';
+import { Trophy, Clock, Target, Medal, ArrowLeft, Trash2 } from 'lucide-react';
 import { Button } from '@/components/ui/button';
 import { supabase } from '@/integrations/supabase/client';
+import {
+  AlertDialog,
+  AlertDialogAction,
+  AlertDialogCancel,
+  AlertDialogContent,
+  AlertDialogDescription,
+  AlertDialogFooter,
+  AlertDialogHeader,
+  AlertDialogTitle,
+  AlertDialogTrigger,
+} from '@/components/ui/alert-dialog';
 
 interface LeaderboardEntry {
   id: string;
@@ -56,6 +67,19 @@ const Leaderboard = ({ onBack }: LeaderboardProps) => {
     setLoading(false);
   };
 
+  const clearLeaderboard = async () => {
+    const { error } = await supabase
+      .from('leaderboard')
+      .delete()
+      .neq('id', '00000000-0000-0000-0000-000000000000'); // Delete all rows
+    
+    if (error) {
+      console.error('Error clearing leaderboard:', error);
+    } else {
+      setEntries([]);
+    }
+  };
+
   const getMedalIcon = (position: number) => {
     switch (position) {
       case 0: return '🥇';
@@ -89,7 +113,32 @@ const Leaderboard = ({ onBack }: LeaderboardProps) => {
           Leaderboard
         </h1>
         
-        <div className="w-20" />
+        <AlertDialog>
+          <AlertDialogTrigger asChild>
+            <Button
+              variant="destructive"
+              size="sm"
+              className="font-racing"
+            >
+              <Trash2 className="w-4 h-4 mr-2" />
+              Clear
+            </Button>
+          </AlertDialogTrigger>
+          <AlertDialogContent>
+            <AlertDialogHeader>
+              <AlertDialogTitle>Clear Leaderboard?</AlertDialogTitle>
+              <AlertDialogDescription>
+                This will permanently delete all scores from the leaderboard. This action cannot be undone.
+              </AlertDialogDescription>
+            </AlertDialogHeader>
+            <AlertDialogFooter>
+              <AlertDialogCancel>Cancel</AlertDialogCancel>
+              <AlertDialogAction onClick={clearLeaderboard}>
+                Clear All
+              </AlertDialogAction>
+            </AlertDialogFooter>
+          </AlertDialogContent>
+        </AlertDialog>
       </div>
 
       {/* Filter tabs */}
