@@ -25,7 +25,7 @@ const formatTime = (seconds: number): string => {
 };
 
 const FinishScreen = ({ score, playerName, maxDistance, onRestart, onShowLeaderboard }: FinishScreenProps) => {
-  const accuracy = Math.round((score.correctAnswers / 30) * 100);
+  const accuracy = Math.round((score.correctAnswers / 20) * 100);
   const isGoodScore = accuracy >= 70;
 
   return (
@@ -132,7 +132,7 @@ const FinishScreen = ({ score, playerName, maxDistance, onRestart, onShowLeaderb
             </div>
             <span className="font-racing text-3xl text-success">{accuracy}%</span>
             <p className="text-xs text-muted-foreground mt-1">
-              {score.correctAnswers}/30 correct
+              {score.correctAnswers}/20 correct
             </p>
           </div>
 

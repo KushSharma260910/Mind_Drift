@@ -104,7 +104,7 @@ export const useGameState = () => {
     
     setIsAnswering(true);
     const isCorrect = answerIndex === currentQuestion.correctAnswer;
-    const answerTime = 8 - timeLeft;
+    const answerTime = 15 - timeLeft;
     
     setLastAnswerResult(isCorrect ? 'correct' : 'wrong');
     setAnswerTimes(prev => [...prev, answerTime]);
