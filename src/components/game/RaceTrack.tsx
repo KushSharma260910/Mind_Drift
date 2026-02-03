@@ -86,7 +86,7 @@ const RaceTrack = ({ playerDistance, maxDistance, lastAnswerResult }: RaceTrackP
           )}
           
           {/* The car - using 🚗 which naturally faces right */}
-          <span className="relative text-6xl drop-shadow-lg inline-block"style={{transform:"scaleX(-1)"}}>🚗</span>
+          <span className="relative text-6xl drop-shadow-lg inline-block"style={{transform:"scaleX(-1)"}}>🏎</span>
           
           {/* Exhaust smoke effect */}
           {lastAnswerResult === 'correct' && (
