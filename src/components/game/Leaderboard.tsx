@@ -22,7 +22,6 @@ interface LeaderboardEntry {
   correct_answers: number;
   total_time: number;
   accuracy: number;
-  age_group: string;
   created_at: string;
 }
 
@@ -39,25 +38,18 @@ const formatTime = (seconds: number): string => {
 const Leaderboard = ({ onBack }: LeaderboardProps) => {
   const [entries, setEntries] = useState<LeaderboardEntry[]>([]);
   const [loading, setLoading] = useState(true);
-  const [filter, setFilter] = useState<'all' | 'young' | 'adult'>('all');
 
   useEffect(() => {
     fetchLeaderboard();
-  }, [filter]);
+  }, []);
 
   const fetchLeaderboard = async () => {
     setLoading(true);
-    let query = supabase
+    const { data, error } = await supabase
       .from('leaderboard')
       .select('*')
       .order('score', { ascending: false })
       .limit(50);
-    
-    if (filter !== 'all') {
-      query = query.eq('age_group', filter);
-    }
-
-    const { data, error } = await query;
     
     if (error) {
       console.error('Error fetching leaderboard:', error);
@@ -71,7 +63,7 @@ const Leaderboard = ({ onBack }: LeaderboardProps) => {
     const { error } = await supabase
       .from('leaderboard')
       .delete()
-      .neq('id', '00000000-0000-0000-0000-000000000000'); // Delete all rows
+      .neq('id', '00000000-0000-0000-0000-000000000000');
     
     if (error) {
       console.error('Error clearing leaderboard:', error);
@@ -98,7 +90,7 @@ const Leaderboard = ({ onBack }: LeaderboardProps) => {
       </div>
 
       {/* Header */}
-      <div className="relative z-10 flex items-center justify-between mb-6">
+      <div className="relative z-10 flex items-center justify-between mb-8">
         <Button
           variant="ghost"
           onClick={onBack}
@@ -141,22 +133,8 @@ const Leaderboard = ({ onBack }: LeaderboardProps) => {
         </AlertDialog>
       </div>
 
-      {/* Filter tabs */}
-      <div className="relative z-10 flex justify-center gap-2 mb-6">
-        {(['all', 'young', 'adult'] as const).map((f) => (
-          <Button
-            key={f}
-            variant={filter === f ? 'default' : 'outline'}
-            onClick={() => setFilter(f)}
-            className="font-racing capitalize"
-          >
-            {f === 'all' ? 'All Players' : f === 'young' ? 'Ages 10-15' : 'Ages 15+'}
-          </Button>
-        ))}
-      </div>
-
       {/* Leaderboard table */}
-      <div className="relative z-10 flex-1 max-w-4xl mx-auto w-full">
+      <div className="relative z-10 flex-1 max-w-3xl mx-auto w-full">
         {loading ? (
           <div className="flex items-center justify-center h-64">
             <motion.div
@@ -164,7 +142,7 @@ const Leaderboard = ({ onBack }: LeaderboardProps) => {
               animate={{ rotate: 360 }}
               transition={{ duration: 1, repeat: Infinity, ease: 'linear' }}
             >
-              🚗
+              🏎
             </motion.div>
           </div>
         ) : entries.length === 0 ? (
@@ -176,13 +154,12 @@ const Leaderboard = ({ onBack }: LeaderboardProps) => {
         ) : (
           <div className="space-y-3">
             {/* Header row */}
-            <div className="grid grid-cols-12 gap-2 px-4 py-2 text-sm text-muted-foreground font-medium">
+            <div className="grid grid-cols-10 gap-2 px-4 py-2 text-sm text-muted-foreground font-medium">
               <div className="col-span-1">#</div>
               <div className="col-span-3">Player</div>
               <div className="col-span-2 text-center">Score</div>
               <div className="col-span-2 text-center">Accuracy</div>
               <div className="col-span-2 text-center">Time</div>
-              <div className="col-span-2 text-center">Category</div>
             </div>
 
             {/* Entries */}
@@ -192,7 +169,7 @@ const Leaderboard = ({ onBack }: LeaderboardProps) => {
                 initial={{ opacity: 0, x: -20 }}
                 animate={{ opacity: 1, x: 0 }}
                 transition={{ delay: index * 0.05 }}
-                className={`grid grid-cols-12 gap-2 px-4 py-3 rounded-xl border ${
+                className={`grid grid-cols-10 gap-2 px-4 py-3 rounded-xl border ${
                   index < 3 
                     ? 'bg-gradient-to-r from-primary/10 to-secondary/10 border-primary/30' 
                     : 'bg-card/50 border-border'
@@ -218,15 +195,6 @@ const Leaderboard = ({ onBack }: LeaderboardProps) => {
                 <div className="col-span-2 flex items-center justify-center gap-1">
                   <Clock className="w-4 h-4 text-secondary" />
                   <span className="text-secondary">{formatTime(entry.total_time)}</span>
-                </div>
-                <div className="col-span-2 flex items-center justify-center">
-                  <span className={`text-xs px-2 py-1 rounded-full ${
-                    entry.age_group === 'young' 
-                      ? 'bg-primary/20 text-primary' 
-                      : 'bg-secondary/20 text-secondary'
-                  }`}>
-                    {entry.age_group === 'young' ? '10-15' : '15+'}
-                  </span>
                 </div>
               </motion.div>
             ))}
