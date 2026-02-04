@@ -60,6 +60,24 @@ const easyQuestions: Question[] = [
   { id: 'e48', question: 'What is a baby dog called?', options: ['Kitten', 'Puppy', 'Cub', 'Calf'], correctAnswer: 1, difficulty: 'easy', category: 'Animals' },
   { id: 'e49', question: 'How many zeroes are in one thousand?', options: ['2', '3', '4', '5'], correctAnswer: 1, difficulty: 'easy', category: 'Math' },
   { id: 'e50', question: 'What is the opposite of hot?', options: ['Warm', 'Cold', 'Cool', 'Frozen'], correctAnswer: 1, difficulty: 'easy', category: 'Language' },
+  // Sports Questions - Easy
+  { id: 'e51', question: 'How many players are in a cricket team?', options: ['9', '10', '11', '12'], correctAnswer: 2, difficulty: 'easy', category: 'Sports' },
+  { id: 'e52', question: 'Which country won the 2022 FIFA World Cup?', options: ['France', 'Argentina', 'Brazil', 'Germany'], correctAnswer: 1, difficulty: 'easy', category: 'Sports' },
+  { id: 'e53', question: 'What sport is Cristiano Ronaldo famous for?', options: ['Basketball', 'Football', 'Tennis', 'Cricket'], correctAnswer: 1, difficulty: 'easy', category: 'Sports' },
+  { id: 'e54', question: 'How many points is a goal worth in football/soccer?', options: ['1', '2', '3', '6'], correctAnswer: 0, difficulty: 'easy', category: 'Sports' },
+  { id: 'e55', question: 'What color card means a player is sent off in football?', options: ['Yellow', 'Red', 'Green', 'Blue'], correctAnswer: 1, difficulty: 'easy', category: 'Sports' },
+  { id: 'e56', question: 'In which sport do you hit a shuttlecock?', options: ['Tennis', 'Badminton', 'Squash', 'Table Tennis'], correctAnswer: 1, difficulty: 'easy', category: 'Sports' },
+  { id: 'e57', question: 'Which country is famous for inventing cricket?', options: ['India', 'Australia', 'England', 'South Africa'], correctAnswer: 2, difficulty: 'easy', category: 'Sports' },
+  { id: 'e58', question: 'How many rings are on the Olympic flag?', options: ['3', '4', '5', '6'], correctAnswer: 2, difficulty: 'easy', category: 'Sports' },
+  // Movies Questions - Easy
+  { id: 'e59', question: 'Which movie features a boy wizard named Harry?', options: ['Lord of the Rings', 'Harry Potter', 'Narnia', 'Percy Jackson'], correctAnswer: 1, difficulty: 'easy', category: 'Movies' },
+  { id: 'e60', question: 'What animated movie features a clownfish named Nemo?', options: ['Shark Tale', 'Finding Nemo', 'The Little Mermaid', 'Moana'], correctAnswer: 1, difficulty: 'easy', category: 'Movies' },
+  { id: 'e61', question: 'Who plays Iron Man in the Marvel movies?', options: ['Chris Evans', 'Robert Downey Jr.', 'Chris Hemsworth', 'Tom Holland'], correctAnswer: 1, difficulty: 'easy', category: 'Movies' },
+  { id: 'e62', question: 'Which Bollywood movie features the song "Chaiyya Chaiyya"?', options: ['DDLJ', 'Dil Se', 'Kuch Kuch Hota Hai', 'Kabhi Khushi Kabhie Gham'], correctAnswer: 1, difficulty: 'easy', category: 'Movies' },
+  { id: 'e63', question: 'What is the name of the lion in The Lion King?', options: ['Mufasa', 'Simba', 'Scar', 'Timon'], correctAnswer: 1, difficulty: 'easy', category: 'Movies' },
+  { id: 'e64', question: 'Which actor played the role of Batman in "The Dark Knight"?', options: ['Ben Affleck', 'Christian Bale', 'George Clooney', 'Val Kilmer'], correctAnswer: 1, difficulty: 'easy', category: 'Movies' },
+  { id: 'e65', question: 'In which movie does the famous dialogue "Mogambo Khush Hua" appear?', options: ['Sholay', 'Mr. India', 'Don', 'Agneepath'], correctAnswer: 1, difficulty: 'easy', category: 'Movies' },
+  { id: 'e66', question: 'Which Disney princess has ice powers?', options: ['Anna', 'Elsa', 'Rapunzel', 'Moana'], correctAnswer: 1, difficulty: 'easy', category: 'Movies' },
 ];
 
 const mediumQuestions: Question[] = [
@@ -113,6 +131,24 @@ const mediumQuestions: Question[] = [
   { id: 'm48', question: 'What is the Great Barrier Reef made of?', options: ['Rocks', 'Coral', 'Sand', 'Volcanic rock'], correctAnswer: 1, difficulty: 'medium', category: 'Science' },
   { id: 'm49', question: 'What is the smallest bone in the human body?', options: ['Stapes', 'Femur', 'Tibia', 'Radius'], correctAnswer: 0, difficulty: 'medium', category: 'Science' },
   { id: 'm50', question: 'Which Shakespeare play features Romeo and Juliet?', options: ['Hamlet', 'Othello', 'Romeo and Juliet', 'Macbeth'], correctAnswer: 2, difficulty: 'medium', category: 'Literature' },
+  // Sports Questions - Medium
+  { id: 'm51', question: 'Who has won the most FIFA Ballon d\'Or awards?', options: ['Cristiano Ronaldo', 'Lionel Messi', 'Neymar', 'Pelé'], correctAnswer: 1, difficulty: 'medium', category: 'Sports' },
+  { id: 'm52', question: 'Which country has won the most Cricket World Cups?', options: ['India', 'Australia', 'West Indies', 'England'], correctAnswer: 1, difficulty: 'medium', category: 'Sports' },
+  { id: 'm53', question: 'In which year did India win its first Cricket World Cup?', options: ['1975', '1983', '1987', '1992'], correctAnswer: 1, difficulty: 'medium', category: 'Sports' },
+  { id: 'm54', question: 'Who holds the record for most goals in World Cup history?', options: ['Pelé', 'Ronaldo (Brazil)', 'Miroslav Klose', 'Lionel Messi'], correctAnswer: 2, difficulty: 'medium', category: 'Sports' },
+  { id: 'm55', question: 'Which tennis player has won the most Grand Slam titles?', options: ['Roger Federer', 'Rafael Nadal', 'Novak Djokovic', 'Pete Sampras'], correctAnswer: 2, difficulty: 'medium', category: 'Sports' },
+  { id: 'm56', question: 'What is the duration of a standard football/soccer match?', options: ['60 minutes', '80 minutes', '90 minutes', '120 minutes'], correctAnswer: 2, difficulty: 'medium', category: 'Sports' },
+  { id: 'm57', question: 'Which player is known as "The Wall" in cricket?', options: ['Sachin Tendulkar', 'Rahul Dravid', 'VVS Laxman', 'Sourav Ganguly'], correctAnswer: 1, difficulty: 'medium', category: 'Sports' },
+  { id: 'm58', question: 'Which country hosted the 2014 FIFA World Cup?', options: ['Germany', 'South Africa', 'Brazil', 'Russia'], correctAnswer: 2, difficulty: 'medium', category: 'Sports' },
+  // Movies Questions - Medium
+  { id: 'm59', question: 'Which Bollywood actor is known as "King Khan"?', options: ['Salman Khan', 'Shah Rukh Khan', 'Aamir Khan', 'Saif Ali Khan'], correctAnswer: 1, difficulty: 'medium', category: 'Movies' },
+  { id: 'm60', question: 'Which movie won the Oscar for Best Picture in 2023?', options: ['Top Gun: Maverick', 'Everything Everywhere All at Once', 'Avatar 2', 'The Banshees of Inisherin'], correctAnswer: 1, difficulty: 'medium', category: 'Movies' },
+  { id: 'm61', question: 'Who directed the movie "3 Idiots"?', options: ['Karan Johar', 'Rajkumar Hirani', 'Sanjay Leela Bhansali', 'Anurag Kashyap'], correctAnswer: 1, difficulty: 'medium', category: 'Movies' },
+  { id: 'm62', question: 'Which Hollywood movie features the quote "I\'ll be back"?', options: ['Die Hard', 'Terminator', 'Rambo', 'Predator'], correctAnswer: 1, difficulty: 'medium', category: 'Movies' },
+  { id: 'm63', question: 'Which Bollywood film was India\'s official entry for Oscars 2024?', options: ['Pathaan', 'RRR', 'Last Film Show', 'Gangubai Kathiawadi'], correctAnswer: 2, difficulty: 'medium', category: 'Movies' },
+  { id: 'm64', question: 'Who played the Joker in "The Dark Knight" (2008)?', options: ['Jared Leto', 'Joaquin Phoenix', 'Heath Ledger', 'Jack Nicholson'], correctAnswer: 2, difficulty: 'medium', category: 'Movies' },
+  { id: 'm65', question: 'Which movie features the famous "Sholay" dialogue "Kitne aadmi the"?', options: ['Don', 'Sholay', 'Deewar', 'Zanjeer'], correctAnswer: 1, difficulty: 'medium', category: 'Movies' },
+  { id: 'm66', question: 'What is the highest-grossing Bollywood film of all time?', options: ['Dangal', 'PK', 'Pathaan', 'Baahubali 2'], correctAnswer: 3, difficulty: 'medium', category: 'Movies' },
 ];
 
 const hardQuestions: Question[] = [
