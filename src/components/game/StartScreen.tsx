@@ -1,12 +1,11 @@
 import { useState } from 'react';
 import { motion } from 'framer-motion';
-import { AgeGroup } from '@/data/questions';
-import { Volume2, VolumeX, Trophy, Zap, Brain, User } from 'lucide-react';
+import { Volume2, VolumeX, Trophy, Zap, Brain, User, Play } from 'lucide-react';
 import { Button } from '@/components/ui/button';
 import { Input } from '@/components/ui/input';
 
 interface StartScreenProps {
-  onStart: (ageGroup: AgeGroup, playerName: string) => void;
+  onStart: (playerName: string) => void;
   soundEnabled: boolean;
   onToggleSound: () => void;
 }
@@ -15,7 +14,7 @@ const StartScreen = ({ onStart, soundEnabled, onToggleSound }: StartScreenProps)
   const [playerName, setPlayerName] = useState('');
   const [nameError, setNameError] = useState('');
 
-  const handleStart = (ageGroup: AgeGroup) => {
+  const handleStart = () => {
     const trimmedName = playerName.trim();
     if (!trimmedName) {
       setNameError('Please enter your name to start!');
@@ -26,7 +25,7 @@ const StartScreen = ({ onStart, soundEnabled, onToggleSound }: StartScreenProps)
       return;
     }
     setNameError('');
-    onStart(ageGroup, trimmedName);
+    onStart(trimmedName);
   };
 
   return (
@@ -157,52 +156,30 @@ const StartScreen = ({ onStart, soundEnabled, onToggleSound }: StartScreenProps)
           )}
         </motion.div>
 
-        {/* Age group selection */}
+        {/* Start Quiz Button */}
         <motion.div
           className="space-y-4"
           initial={{ opacity: 0, y: 20 }}
           animate={{ opacity: 1, y: 0 }}
           transition={{ delay: 0.6 }}
         >
-          <h2 className="font-racing text-xl text-muted-foreground mb-6">
-            Select Your Category
-          </h2>
+          <motion.div
+            whileHover={{ scale: 1.02 }}
+            whileTap={{ scale: 0.98 }}
+          >
+            <Button
+              onClick={handleStart}
+              className="px-12 py-8 text-xl font-racing bg-gradient-to-r from-primary to-accent hover:opacity-90 text-primary-foreground neon-box-cyan"
+              size="lg"
+            >
+              <Play className="w-6 h-6 mr-3" />
+              Start Quiz
+            </Button>
+          </motion.div>
           
-          <div className="flex flex-col sm:flex-row gap-4 justify-center">
-            <motion.div
-              whileHover={{ scale: 1.02 }}
-              whileTap={{ scale: 0.98 }}
-            >
-              <Button
-                onClick={() => handleStart('young')}
-                className="w-full sm:w-auto px-8 py-6 text-lg font-racing bg-gradient-to-r from-neon-cyan to-primary hover:opacity-90 text-primary-foreground neon-box-cyan"
-                size="lg"
-              >
-                <div className="flex flex-col items-center">
-                  <span className="text-2xl mb-1">🎓</span>
-                  <span>Ages 10-15</span>
-                  <span className="text-xs opacity-80">Easy-Medium</span>
-                </div>
-              </Button>
-            </motion.div>
-
-            <motion.div
-              whileHover={{ scale: 1.02 }}
-              whileTap={{ scale: 0.98 }}
-            >
-              <Button
-                onClick={() => handleStart('adult')}
-                className="w-full sm:w-auto px-8 py-6 text-lg font-racing bg-gradient-to-r from-secondary to-neon-orange hover:opacity-90 text-secondary-foreground neon-box-orange"
-                size="lg"
-              >
-                <div className="flex flex-col items-center">
-                  <span className="text-2xl mb-1">🎯</span>
-                  <span>Ages 15+</span>
-                  <span className="text-xs opacity-80">Medium-Hard</span>
-                </div>
-              </Button>
-            </motion.div>
-          </div>
+          <p className="text-sm text-muted-foreground">
+            Easy-Medium questions with 2 Hard challenges
+          </p>
         </motion.div>
 
         {/* Instructions hint */}

@@ -1,5 +1,5 @@
 import { useState, useCallback, useEffect, useRef } from 'react';
-import { Question, AgeGroup, generateGameQuestions } from '@/data/questions';
+import { Question, generateGameQuestions } from '@/data/questions';
 import { supabase } from '@/integrations/supabase/client';
 
 export type GameState = 'start' | 'playing' | 'finished' | 'leaderboard';
@@ -16,7 +16,6 @@ interface GameScore {
 
 export const useGameState = () => {
   const [gameState, setGameState] = useState<GameState>('start');
-  const [ageGroup, setAgeGroup] = useState<AgeGroup>('young');
   const [playerName, setPlayerName] = useState('');
   const [questions, setQuestions] = useState<Question[]>([]);
   const [currentQuestionIndex, setCurrentQuestionIndex] = useState(0);
@@ -69,7 +68,6 @@ export const useGameState = () => {
         correct_answers: finalScore.correctAnswers,
         total_time: finalScore.totalTime,
         accuracy: accuracy,
-        age_group: ageGroup,
       });
     
     if (error) {
@@ -77,10 +75,9 @@ export const useGameState = () => {
     }
   };
 
-  const startGame = useCallback((selectedAgeGroup: AgeGroup, name: string) => {
-    setAgeGroup(selectedAgeGroup);
+  const startGame = useCallback((name: string) => {
     setPlayerName(name);
-    setQuestions(generateGameQuestions(selectedAgeGroup, totalQuestions));
+    setQuestions(generateGameQuestions(totalQuestions));
     setCurrentQuestionIndex(0);
     setPlayerDistance(0);
     setTimeLeft(15);
@@ -197,7 +194,6 @@ export const useGameState = () => {
 
   return {
     gameState,
-    ageGroup,
     playerName,
     currentQuestion,
     currentQuestionIndex,

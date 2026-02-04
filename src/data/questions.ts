@@ -1,5 +1,4 @@
 export type Difficulty = 'easy' | 'medium' | 'hard';
-export type AgeGroup = 'young' | 'adult';
 
 export interface Question {
   id: string;
@@ -183,49 +182,31 @@ const pickRandom = <T extends { id: string }>(array: T[], count: number, exclude
   return shuffleArray(available).slice(0, Math.min(count, available.length));
 };
 
-export const generateGameQuestions = (ageGroup: AgeGroup, totalQuestions: number = 30): Question[] => {
+export const generateGameQuestions = (totalQuestions: number = 20): Question[] => {
   const usedIds = new Set<string>();
-  const questions: Question[] = [];
-
-  if (ageGroup === 'young') {
-    const s1Easy = pickRandom(easyQuestions, 7, usedIds);
-    s1Easy.forEach(q => usedIds.add(q.id));
-    const s1Med = pickRandom(mediumQuestions, 3, usedIds);
-    s1Med.forEach(q => usedIds.add(q.id));
-    questions.push(...shuffleArray([...s1Easy, ...s1Med]));
-    
-    const s2Easy = pickRandom(easyQuestions, 5, usedIds);
-    s2Easy.forEach(q => usedIds.add(q.id));
-    const s2Med = pickRandom(mediumQuestions, 5, usedIds);
-    s2Med.forEach(q => usedIds.add(q.id));
-    questions.push(...shuffleArray([...s2Easy, ...s2Med]));
-    
-    const s3Easy = pickRandom(easyQuestions, 3, usedIds);
-    s3Easy.forEach(q => usedIds.add(q.id));
-    const s3Med = pickRandom(mediumQuestions, 7, usedIds);
-    s3Med.forEach(q => usedIds.add(q.id));
-    questions.push(...shuffleArray([...s3Easy, ...s3Med]));
-  } else {
-    const s1Med = pickRandom(mediumQuestions, 7, usedIds);
-    s1Med.forEach(q => usedIds.add(q.id));
-    const s1Hard = pickRandom(hardQuestions, 3, usedIds);
-    s1Hard.forEach(q => usedIds.add(q.id));
-    questions.push(...shuffleArray([...s1Med, ...s1Hard]));
-    
-    const s2Med = pickRandom(mediumQuestions, 5, usedIds);
-    s2Med.forEach(q => usedIds.add(q.id));
-    const s2Hard = pickRandom(hardQuestions, 5, usedIds);
-    s2Hard.forEach(q => usedIds.add(q.id));
-    questions.push(...shuffleArray([...s2Med, ...s2Hard]));
-    
-    const s3Med = pickRandom(mediumQuestions, 3, usedIds);
-    s3Med.forEach(q => usedIds.add(q.id));
-    const s3Hard = pickRandom(hardQuestions, 7, usedIds);
-    s3Hard.forEach(q => usedIds.add(q.id));
-    questions.push(...shuffleArray([...s3Med, ...s3Hard]));
-  }
-
-  return questions;
+  
+  // 18 easy-medium questions + 2 hard questions
+  const easyMediumCount = totalQuestions - 2;
+  const hardCount = 2;
+  
+  // Pick easy and medium questions
+  const easyPicks = pickRandom(easyQuestions, Math.floor(easyMediumCount * 0.5), usedIds);
+  easyPicks.forEach(q => usedIds.add(q.id));
+  
+  const mediumPicks = pickRandom(mediumQuestions, easyMediumCount - easyPicks.length, usedIds);
+  mediumPicks.forEach(q => usedIds.add(q.id));
+  
+  const hardPicks = pickRandom(hardQuestions, hardCount, usedIds);
+  
+  // Shuffle easy-medium questions
+  const mainQuestions = shuffleArray([...easyPicks, ...mediumPicks]);
+  
+  // Insert hard questions at positions near the end (question 15 and 18)
+  const result = [...mainQuestions];
+  if (hardPicks[0]) result.splice(14, 0, hardPicks[0]);
+  if (hardPicks[1]) result.splice(17, 0, hardPicks[1]);
+  
+  return result.slice(0, totalQuestions);
 };
 
 export { easyQuestions, mediumQuestions, hardQuestions };
